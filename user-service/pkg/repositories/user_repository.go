@@ -6,9 +6,10 @@ import (
 )
 
 type UserRepository interface {
-	CreateNewUser(user models.User) error
-	UpdateUser(user models.User) error
-	GetUserByID(id uint) (user models.User, err error)
+	CreateNewUser(user *models.User) error
+	UpdateUser(user *models.User) error
+	GetUserByID(id uint) (user *models.User, err error)
+	GetUserByUserNameOrEmail(name string) (user *models.User, err error)
 	DeleteUserByID(id uint) error
 }
 
@@ -20,7 +21,7 @@ func NewUserRepository() UserRepository {
 	return &userRepositoryImpl{}
 }
 
-func (r *userRepositoryImpl) CreateNewUser(user models.User) error {
+func (r *userRepositoryImpl) CreateNewUser(user *models.User) error {
 	err := r.db.Create(&user).Error
 	if err != nil {
 		return err
@@ -28,7 +29,7 @@ func (r *userRepositoryImpl) CreateNewUser(user models.User) error {
 	return nil
 }
 
-func (r *userRepositoryImpl) UpdateUser(user models.User) error {
+func (r *userRepositoryImpl) UpdateUser(user *models.User) error {
 	var oldUser models.User
 	err := r.db.Where("id=?", user.ID).First(&oldUser).Error
 	if err != nil {
@@ -42,12 +43,20 @@ func (r *userRepositoryImpl) UpdateUser(user models.User) error {
 	return nil
 }
 
-func (r *userRepositoryImpl) GetUserByID(id uint) (models.User, error) {
-	var user models.User
+func (r *userRepositoryImpl) GetUserByID(id uint) (*models.User, error) {
+	var user *models.User
 
 	err := r.db.Where("id=?", id).First(&user).Error
 	if err != nil {
 		return user, err
+	}
+	return user, nil
+}
+
+func (r *userRepositoryImpl) GetUserByUserNameOrEmail(name string) (user *models.User, err error) {
+	err = r.db.Where("name=? or email=?", name, name).First(&user).Error
+	if err != nil {
+		return nil, err
 	}
 	return user, nil
 }
