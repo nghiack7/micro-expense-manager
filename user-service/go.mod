@@ -3,6 +3,7 @@ module github.com/nghiack7/micro-expense-manager/user-service
 go 1.21.0
 
 require (
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/spf13/viper v1.17.0
 	google.golang.org/grpc v1.58.2
 	google.golang.org/protobuf v1.31.0

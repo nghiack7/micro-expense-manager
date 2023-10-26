@@ -54,7 +54,7 @@ func (r *userRepositoryImpl) GetUserByID(id uint) (*models.User, error) {
 }
 
 func (r *userRepositoryImpl) GetUserByUserNameOrEmail(name string) (user *models.User, err error) {
-	err = r.db.Where("name=? or email=?", name, name).First(&user).Error
+	err = r.db.Where("username=? or email=?", name, name).First(&user).Error
 	if err != nil {
 		return nil, err
 	}
